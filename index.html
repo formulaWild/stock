@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Holdings Pie Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .stock-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        input {
+            margin: 6px;
+            padding: 5px;
+            width: 50%;
+        }
+        button {
+            margin: 5px 5px 0 5px;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .total-value {
+            margin: 6px;
+            padding: 5px;
+            width: 100px;
+            text-align: right;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: default;
+        }
+        .button-container {
+            margin-top: -10px;
+        }
+        #overall-total-value {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Holdings Pie Chart</h1>
+    <div id="stock-entries">
+        <div class="stock-row">
+            <input type="text" placeholder="Stock Name" oninput="updateTotalValue(this)">
+            <input type="number" placeholder="Shares" oninput="updateTotalValue(this)">
+            <input type="number" placeholder="Current Price" oninput="updateTotalValue(this)">
+            <input type="text" class="total-value" placeholder="Total Value" disabled>
+            <button onclick="removeRow(this)">Delete</button>
+        </div>
+    </div>
+    <div class="button-container">
+        <button onclick="addRow()">Add Stock</button>
+        <button onclick="generatePieChart()">Generate Pie Chart</button>
+    </div>
+    
+    <canvas id="pie-chart"></canvas>
+    <div id="overall-total-value">Total Portfolio Value: $0.00</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> <!-- 加入數據標籤插件 -->
+    <script>
+        let myChart = null;
+
+        function addRow() {
+            const row = document.createElement('div');
+            row.className = 'stock-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Stock Name" oninput="updateTotalValue(this)">
+                <input type="number" placeholder="Shares" oninput="updateTotalValue(this)">
+                <input type="number" placeholder="Current Price" oninput="updateTotalValue(this)">
+                <input type="text" class="total-value" placeholder="Total Value" disabled>
+                <button onclick="removeRow(this)">Delete</button>
+            `;
+            document.getElementById('stock-entries').appendChild(row);
+        }
+
+        function removeRow(button) {
+            button.parentElement.remove();
+            updateOverallTotalValue();
+        }
+
+        function updateTotalValue(input) {
+            const row = input.parentElement;
+            const inputs = row.getElementsByTagName('input');
+            const shares = parseFloat(inputs[1].value);
+            const price = parseFloat(inputs[2].value);
+            const totalValueField = inputs[3];
+
+            if (!isNaN(shares) && !isNaN(price)) {
+                totalValueField.value = (shares * price).toFixed(2);
+            } else {
+                totalValueField.value = '';
+            }
+            updateOverallTotalValue();
+        }
+
+        function updateOverallTotalValue() {
+            const rows = document.getElementsByClassName('stock-row');
+            let overallTotal = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const inputs = rows[i].getElementsByTagName('input');
+                const shares = parseFloat(inputs[1].value);
+                const price = parseFloat(inputs[2].value);
+
+                if (!isNaN(shares) && !isNaN(price)) {
+                    overallTotal += shares * price;
+                }
+            }
+
+            document.getElementById('overall-total-value').innerText = `Total Portfolio Value: $${overallTotal.toFixed(2)}`;
+        }
+
+        function generatePieChart() {
+            const rows = document.getElementsByClassName('stock-row');
+            const labels = [];
+            const data = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const inputs = rows[i].getElementsByTagName('input');
+                const stockName = inputs[0].value;
+                const shares = parseFloat(inputs[1].value);
+                const price = parseFloat(inputs[2].value);
+                
+                if (stockName && shares && price) {
+                    labels.push(stockName);
+                    data.push(shares * price);
+                }
+            }
+
+            const ctx = document.getElementById('pie-chart').getContext('2d');
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Stock Holdings',
+                        data: data,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                    }]
+                },
+                options: {
+                    plugins: {
+                        datalabels: {
+                            display: true,
+                            color: '#fff',
+                            formatter: function(value, context) {
+                                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return percentage + '%';
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const total = data.reduce((acc, val) => acc + val, 0);
+                                    const currentValue = data[tooltipItem.dataIndex];
+                                    const percentage = ((currentValue / total) * 100).toFixed(2);
+                                    return `${labels[tooltipItem.dataIndex]}: ${percentage}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateOverallTotalValue();
+        }
+    </script>
+</body>
+</html>
