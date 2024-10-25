@@ -66,7 +66,6 @@
     <div id="overall-total-value">Total Portfolio Value: $0.00</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> 
     <script>
         let myChart = null;
 
@@ -154,24 +153,13 @@
                     }]
                 },
                 options: {
-                    plugins: {
-                        datalabels: {
-                            display: true,
-                            color: '#fff',
-                            formatter: function(value, context) {
-                                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                                const percentage = ((value / total) * 100).toFixed(2);
-                                return percentage + '%';
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    const total = data.reduce((acc, val) => acc + val, 0);
-                                    const currentValue = data[tooltipItem.dataIndex];
-                                    const percentage = ((currentValue / total) * 100).toFixed(2);
-                                    return `${labels[tooltipItem.dataIndex]}: ${percentage}%`;
-                                }
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                                const currentValue = data.datasets[0].data[tooltipItem.index];
+                                const percentage = ((currentValue / total) * 100).toFixed(2);
+                                return `${data.labels[tooltipItem.index]}: ${percentage}%`;
                             }
                         }
                     }
