@@ -73,9 +73,9 @@
             const row = document.createElement('div');
             row.className = 'stock-row';
             row.innerHTML = `
-                <input type="text" placeholder="Stock Name" oninput="updateTotalValue(this)">
+                <input type="text" placeholder="Name" oninput="updateTotalValue(this)">
                 <input type="number" placeholder="Shares" oninput="updateTotalValue(this)">
-                <input type="number" placeholder="Current Price" oninput="updateTotalValue(this)">
+                <input type="number" placeholder="Price" oninput="updateTotalValue(this)">
                 <input type="text" class="total-value" placeholder="Total Value" disabled>
                 <button onclick="removeRow(this)">Delete</button>
             `;
