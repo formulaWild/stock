@@ -2,47 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stock Holdings Pie Chart</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #2c3e50;
+            margin: 20px 0;
+            font-size: 2.5rem;
         }
         .stock-row {
             display: flex;
             justify-content: center;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 90%;
+            margin: 10px auto;
         }
         input {
-            margin: 6px;
-            padding: 5px;
-            width: 50%;
+            margin: 0 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 20%;
+            font-size: 1rem;
         }
         button {
-            margin: 5px 5px 0 5px;
-            padding: 5px;
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
         }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
         .total-value {
-            margin: 6px;
-            padding: 5px;
             width: 100px;
-            text-align: right;
             border: none;
             background-color: #f0f0f0;
             cursor: default;
-        }
-        .button-container {
-            margin-top: -10px;
+            text-align: right;
         }
         #overall-total-value {
-            margin-top: 10px;
-            font-size: 18px;
+            margin-top: 20px;
+            font-size: 1.5rem;
             font-weight: bold;
+            color: #2c3e50;
         }
         canvas {
-            margin-top: 20px;
+            margin-top: 30px;
+            width: 90%;
+            max-width: 600px;
         }
     </style>
 </head>
@@ -66,7 +92,7 @@
     <div id="overall-total-value">Total Portfolio Value: $0.00</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> <!-- 加入數據標籤插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
     <script>
         let myChart = null;
 
